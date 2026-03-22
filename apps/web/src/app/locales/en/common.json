@@ -1,0 +1,7 @@
+{
+    "dashboardTitle": "Market Dashboard",
+    "topGainers": "Top Gainers",
+    "topLosers": "Top Losers",
+    "refresh": "Refresh",
+    "errorLoading": "Failed to load market data"
+  }
