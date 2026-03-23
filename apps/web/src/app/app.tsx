@@ -1,52 +1,57 @@
-// Uncomment this line to use CSS modules
-// import styles from './app.module.css';
-import NxWelcome from './nx-welcome';
-
-import { Route, Routes, Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { MoversTableCard } from '@/features/market-overview/components/movers-table-card'
+import { useMarketMovers } from '@/features/market-overview/hooks/use-market-movers'
 
 export function App() {
-  return (
-    <div>
-      <NxWelcome title="web" />
+  const { data, isLoading, isError, refetch, isFetching } = useMarketMovers()
 
-      {/* START: routes */}
-      {/* These routes and navigation have been generated for you */}
-      {/* Feel free to move and update them to fit your needs */}
-      <br />
-      <hr />
-      <br />
-      <div role="navigation">
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/page-2">Page 2</Link>
-          </li>
-        </ul>
+  if (isLoading) {
+    return (
+      <main className="p-6">
+        <h1 className="mb-6 text-3xl font-bold">Market Dashboard</h1>
+        <Card>
+          <CardContent className="p-6">Loading market data...</CardContent>
+        </Card>
+      </main>
+    )
+  }
+
+  if (isError || !data) {
+    return (
+      <main className="p-6">
+        <h1 className="mb-6 text-3xl font-bold">Market Dashboard</h1>
+        <Card>
+          <CardContent className="flex items-center justify-between gap-4 p-6">
+            <span>Failed to load market data.</span>
+            <Button onClick={() => refetch()}>Retry</Button>
+          </CardContent>
+        </Card>
+      </main>
+    )
+  }
+
+  return (
+    <main className="space-y-6 p-6">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Market Dashboard</h1>
+          <p className="text-sm text-muted-foreground">
+            {data.lastUpdated ?? 'Latest available market movers'}
+          </p>
+        </div>
+
+        <Button onClick={() => refetch()} disabled={isFetching}>
+          {isFetching ? 'Refreshing...' : 'Refresh'}
+        </Button>
       </div>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div>
-              This is the generated root route.{' '}
-              <Link to="/page-2">Click here for page 2.</Link>
-            </div>
-          }
-        />
-        <Route
-          path="/page-2"
-          element={
-            <div>
-              <Link to="/">Click here to go back to root page.</Link>
-            </div>
-          }
-        />
-      </Routes>
-      {/* END: routes */}
-    </div>
-  );
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <MoversTableCard title="Top 10 Gainers" items={data.topGainers} />
+        <MoversTableCard title="Top 10 Losers" items={data.topLosers} />
+      </div>
+    </main>
+  )
 }
 
-export default App;
+export default App
