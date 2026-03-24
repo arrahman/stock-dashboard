@@ -27,26 +27,31 @@ export function MoversTableCard({ title, items }: Props) {
             <TableRow>
               <TableHead>Symbol</TableHead>
               <TableHead className="text-right">Price</TableHead>
-              <TableHead className="text-right">Change</TableHead>
               <TableHead className="text-right">% Change</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.symbol}>
-                <TableCell className="font-medium">{item.symbol}</TableCell>
-                <TableCell className="text-right">
-                  {item.price.toFixed(2)}
-                </TableCell>
-                <TableCell className="text-right">
-                  {item.change.toFixed(2)}
-                </TableCell>
-                <TableCell className="text-right">
-                  {item.changePercent.toFixed(2)}%
-                </TableCell>
-              </TableRow>
-            ))}
+            {items.map((item) => {
+              const isPositive = item.changePercent >= 0
+
+              return (
+                <TableRow key={item.symbol}>
+                  <TableCell className="font-medium">{item.symbol}</TableCell>
+                  <TableCell className="text-right">
+                    ${item.price.toFixed(2)}
+                  </TableCell>
+                  <TableCell
+                    className={`text-right font-medium ${
+                      isPositive ? 'text-green-600' : 'text-red-600'
+                    }`}
+                  >
+                    {isPositive ? '+' : ''}
+                    {item.changePercent.toFixed(2)}%
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </CardContent>
